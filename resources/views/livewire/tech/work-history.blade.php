@@ -1,6 +1,14 @@
 <div class="safe-top">
     <div class="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-4">
-        <h1 class="text-lg font-semibold text-ink">Fulfillment History</h1>
+        <div class="flex items-center justify-between gap-3">
+            <h1 class="text-lg font-semibold text-ink">Fulfillment History</h1>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-ink-muted transition hover:bg-gray-50">
+                    Logout
+                </button>
+            </form>
+        </div>
         <div class="mt-3 relative">
             <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted pointer-events-none"
                 fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">

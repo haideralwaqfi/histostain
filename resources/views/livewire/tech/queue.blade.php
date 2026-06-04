@@ -1,9 +1,17 @@
 <div class="safe-top">
     {{-- Header --}}
     <div class="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-4">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-3">
             <h1 class="text-lg font-semibold text-ink">Incoming Queue</h1>
-            <span class="text-sm text-ink-muted">{{ $requests->total() }} pending</span>
+            <div class="flex items-center gap-3">
+                <span class="text-sm text-ink-muted">{{ $requests->total() }} pending</span>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-ink-muted transition hover:bg-gray-50">
+                        Logout
+                    </button>
+                </form>
+            </div>
         </div>
         {{-- Type filter --}}
         <div class="flex gap-2 mt-3 overflow-x-auto pb-1 -mx-1 px-1">

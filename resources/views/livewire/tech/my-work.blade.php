@@ -4,8 +4,18 @@
 >
     {{-- Header --}}
     <div class="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-4">
-        <h1 class="text-lg font-semibold text-ink">My Work</h1>
-        <p class="text-sm text-ink-muted">{{ $requests->total() }} active request(s)</p>
+        <div class="flex items-start justify-between gap-3">
+            <div>
+                <h1 class="text-lg font-semibold text-ink">My Work</h1>
+                <p class="text-sm text-ink-muted">{{ $requests->total() }} active request(s)</p>
+            </div>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-ink-muted transition hover:bg-gray-50">
+                    Logout
+                </button>
+            </form>
+        </div>
     </div>
 
     <div class="px-4 py-3 space-y-3">
