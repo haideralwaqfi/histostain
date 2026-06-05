@@ -31,8 +31,9 @@
                         <p class="text-sm font-semibold text-ink">{{ $request->type->shortLabel() }}</p>
                         <p class="text-xs text-ink-muted">Case {{ $request->case_number }}</p>
                         @if($request->mrn) <p class="text-xs text-ink-muted">MRN: {{ $request->mrn }}</p> @endif
-                        <p class="text-xs text-ink-muted mt-1">
-                            Dr. {{ $request->doctor->name }} · {{ $request->updated_at->format('d M Y') }}
+                        <p class="text-xs text-ink-muted mt-1">Dr. {{ $request->doctor->name }}</p>
+                        <p class="text-xs text-ink-muted">
+                            Ordered {{ $request->created_at->format('d M Y, g:i A') }}
                         </p>
                     </div>
                     <x-status-badge :status="$request->status" />

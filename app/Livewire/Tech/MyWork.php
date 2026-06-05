@@ -113,7 +113,7 @@ class MyWork extends Component
                 StainRequestStatus::InProgress,
                 StainRequestStatus::OnHold,
             ])
-            ->with(['doctor'])
+            ->with(['doctor', 'media', 'transitions'])
             ->orderByRaw(StainRequest::priorityOrderSql())
             ->orderBy('created_at')
             ->paginate(20);

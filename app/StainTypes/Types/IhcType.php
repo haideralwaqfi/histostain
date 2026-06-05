@@ -37,7 +37,7 @@ class IhcType implements StainTypeDefinition
             'typeData.blocks.*.antibody' => 'required|string|max:200',
             'typeData.blocks.*.clone' => 'nullable|string|max:100',
             'typeData.blocks.*.dilution' => 'nullable|string|max:100',
-            'typeData.blocks.*.clinical_indication' => 'required|string|max:500',
+            'typeData.blocks.*.clinical_indication' => 'nullable|string|max:500',
             'typeData.blocks.*.section_count' => 'required|integer|min:1|max:50',
             'typeData.blocks.*.controls_required' => 'required|boolean',
         ];

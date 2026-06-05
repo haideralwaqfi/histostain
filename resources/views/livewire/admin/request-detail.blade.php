@@ -24,6 +24,12 @@
         {{-- Details --}}
         <div class="rounded-2xl border border-gray-200 bg-white divide-y divide-gray-100">
             <div class="flex justify-between px-4 py-3 text-sm">
+                <span class="text-ink-muted">Ordered</span>
+                <span class="font-medium text-ink" title="{{ $request->created_at->toDateTimeString() }}">
+                    {{ $request->created_at->format('d M Y, g:i A') }}
+                </span>
+            </div>
+            <div class="flex justify-between px-4 py-3 text-sm">
                 <span class="text-ink-muted">Doctor</span>
                 <span class="font-medium text-ink">{{ $request->doctor->name }}</span>
             </div>
@@ -74,11 +80,13 @@
                     </div>
                     <button
                         wire:click="assignTech"
-                        wire:loading.attr="disabled"
+                        wire:loading.attr="disabled" wire:target="assignTech"
                         class="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white min-h-11 transition hover:bg-primary-dark active:scale-[0.98] disabled:opacity-60"
                     >
                         <span wire:loading.remove wire:target="assignTech">Assign</span>
-                        <span wire:loading wire:target="assignTech">…</span>
+                        <span wire:loading wire:target="assignTech" class="inline-flex items-center gap-1.5">
+                            <x-spinner class="h-3.5 w-3.5" />
+                        </span>
                     </button>
                 </div>
                 @error('selectedTechId') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
@@ -173,9 +181,13 @@
                 <div class="rounded-2xl border border-red-200 bg-red-50 p-4 space-y-3">
                     <p class="text-sm font-semibold text-red-700">Cancel this request?</p>
                     <div class="flex gap-3">
-                        <button wire:click="cancelRequest" class="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white min-h-11">
+                        <button wire:click="cancelRequest"
+                            wire:loading.attr="disabled" wire:target="cancelRequest"
+                            class="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white min-h-11 disabled:opacity-60">
                             <span wire:loading.remove wire:target="cancelRequest">Confirm cancel</span>
-                            <span wire:loading wire:target="cancelRequest">…</span>
+                            <span wire:loading wire:target="cancelRequest" class="inline-flex items-center justify-center gap-1.5">
+                                <x-spinner class="h-3.5 w-3.5" /> Cancelling…
+                            </span>
                         </button>
                         <button wire:click="dismissCancel" class="rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-medium text-ink-muted min-h-11">Keep</button>
                     </div>

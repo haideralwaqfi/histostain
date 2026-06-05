@@ -42,10 +42,17 @@
                             <p class="text-xs text-red-600">{{ $message }}</p>
                         @enderror
                         <div class="flex gap-2">
-                            <button wire:click="confirmReject" class="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white min-h-[44px] transition active:scale-[0.98]">
-                                Confirm Reject
+                            <button wire:click="confirmReject"
+                                wire:loading.attr="disabled" wire:target="confirmReject"
+                                class="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white min-h-11 transition active:scale-[0.98] disabled:opacity-60">
+                                <span wire:loading.remove wire:target="confirmReject">Confirm Reject</span>
+                                <span wire:loading wire:target="confirmReject" class="inline-flex items-center justify-center gap-1.5">
+                                    <x-spinner class="h-3.5 w-3.5" /> Rejecting…
+                                </span>
                             </button>
-                            <button wire:click="cancelReject" class="rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-medium text-ink-muted min-h-[44px] transition active:scale-[0.98]">
+                            <button wire:click="cancelReject"
+                                wire:loading.class="opacity-50 pointer-events-none" wire:target="cancelReject"
+                                class="rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-medium text-ink-muted min-h-11 transition active:scale-[0.98]">
                                 Cancel
                             </button>
                         </div>
@@ -57,16 +64,20 @@
                             @foreach($roles as $role)
                                 <button
                                     wire:click="approve({{ $user->id }}, '{{ $role->value }}')"
-                                    wire:loading.attr="disabled"
-                                    class="flex-1 rounded-xl bg-primary py-2.5 text-xs font-semibold text-white min-h-[44px] transition hover:bg-primary-dark active:scale-[0.98] disabled:opacity-60"
+                                    wire:loading.attr="disabled" wire:target="approve({{ $user->id }}, '{{ $role->value }}')"
+                                    class="flex-1 rounded-xl bg-primary py-2.5 text-xs font-semibold text-white min-h-11 transition hover:bg-primary-dark active:scale-[0.98] disabled:opacity-60"
                                 >
-                                    Approve as {{ $role->label() }}
+                                    <span wire:loading.remove wire:target="approve({{ $user->id }}, '{{ $role->value }}')">Approve as {{ $role->label() }}</span>
+                                    <span wire:loading wire:target="approve({{ $user->id }}, '{{ $role->value }}')" class="inline-flex items-center justify-center gap-1.5">
+                                        <x-spinner class="h-3.5 w-3.5" /> Approving…
+                                    </span>
                                 </button>
                             @endforeach
                         </div>
                         <button
                             wire:click="startReject({{ $user->id }})"
-                            class="w-full rounded-xl border border-red-200 py-2.5 text-sm font-medium text-red-600 min-h-[44px] transition hover:bg-red-50 active:scale-[0.98]"
+                            wire:loading.class="opacity-50 pointer-events-none" wire:target="startReject({{ $user->id }})"
+                            class="w-full rounded-xl border border-red-200 py-2.5 text-sm font-medium text-red-600 min-h-11 transition hover:bg-red-50 active:scale-[0.98]"
                         >
                             Reject
                         </button>

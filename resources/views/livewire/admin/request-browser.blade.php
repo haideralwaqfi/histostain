@@ -62,7 +62,11 @@
                     <x-form.input wire:model.live="dateTo" type="date" label="To" />
                 </div>
                 @if($this->hasActiveFilters())
-                    <button wire:click="clearFilters" class="text-xs text-red-500 hover:underline">Clear all filters</button>
+                    <button wire:click="clearFilters"
+                        wire:loading.class="opacity-50 pointer-events-none" wire:target="clearFilters"
+                        class="text-xs text-red-500 hover:underline">
+                        Clear all filters
+                    </button>
                 @endif
             </div>
         @endif
@@ -97,7 +101,7 @@
                         </div>
                         <div class="flex shrink-0 flex-col items-end gap-1.5">
                             <x-status-badge :status="$request->status" />
-                            <span class="text-xs text-ink-muted">{{ $request->created_at->diffForHumans() }}</span>
+                            <span class="text-xs text-ink-muted">{{ $request->created_at->format('d M Y, g:i A') }}</span>
                         </div>
                     </div>
                 </div>

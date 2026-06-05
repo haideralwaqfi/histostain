@@ -12,12 +12,12 @@
             </div>
             {{-- Filter chips --}}
             <div class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-                <button wire:click="$set('filterStatus', '')" class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterStatus === '' ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted' }}">All</button>
+                <button wire:click="$set('filterStatus', '')" wire:loading.class="opacity-50 pointer-events-none" class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterStatus === '' ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted' }}">All</button>
                 @foreach($statuses as $s)
-                    <button wire:click="$set('filterStatus', '{{ $s->value }}')" class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterStatus === $s->value ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted' }}">{{ $s->label() }}</button>
+                    <button wire:click="$set('filterStatus', '{{ $s->value }}')" wire:loading.class="opacity-50 pointer-events-none" class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterStatus === $s->value ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted' }}">{{ $s->label() }}</button>
                 @endforeach
                 @foreach($roles as $r)
-                    <button wire:click="$set('filterRole', '{{ $r->value }}')" class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterRole === $r->value ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted' }}">{{ $r->label() }}</button>
+                    <button wire:click="$set('filterRole', '{{ $r->value }}')" wire:loading.class="opacity-50 pointer-events-none" class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterRole === $r->value ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted' }}">{{ $r->label() }}</button>
                 @endforeach
             </div>
         </div>

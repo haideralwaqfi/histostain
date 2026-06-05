@@ -41,7 +41,7 @@ class Queue extends Component
     public function render()
     {
         $query = StainRequest::where('status', StainRequestStatus::Pending)
-            ->with(['doctor'])
+            ->with(['doctor', 'media'])
             ->orderByRaw(StainRequest::priorityOrderSql())
             ->orderBy('created_at');
 

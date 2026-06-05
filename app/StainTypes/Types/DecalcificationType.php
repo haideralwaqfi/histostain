@@ -41,7 +41,7 @@ class DecalcificationType implements StainTypeDefinition
             'typeData.blocks.*.tissue_type' => 'required|string|max:200',
             'typeData.blocks.*.method' => 'required|string|in:' . implode(',', array_keys(self::METHOD_OPTIONS)),
             'typeData.blocks.*.estimated_time' => 'nullable|string|max:100',
-            'typeData.blocks.*.indication' => 'required|string|max:500',
+            'typeData.blocks.*.indication' => 'nullable|string|max:500',
         ];
     }
 }

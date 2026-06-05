@@ -39,7 +39,7 @@ class CytologySpecialStainType implements StainTypeDefinition
             'typeData.slide_id' => 'required|string|max:100',
             'typeData.stain' => 'required|string|in:' . implode(',', array_keys(self::STAIN_OPTIONS)),
             'typeData.stain_other' => 'nullable|string|max:200',
-            'typeData.indication' => 'required|string|max:500',
+            'typeData.indication' => 'nullable|string|max:500',
         ];
     }
 }

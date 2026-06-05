@@ -20,7 +20,8 @@
 
     <div class="px-4 py-3 space-y-3">
         @forelse($requests as $request)
-            <div class="rounded-2xl bg-white border shadow-card overflow-hidden
+            <div x-data="{ open: false }"
+                class="rounded-2xl bg-white border shadow-card overflow-hidden
                 {{ $request->isStat() ? 'border-red-300 stat-ring' : 'border-gray-200' }}">
 
                 @if($request->isStat())
@@ -34,7 +35,9 @@
                             <p class="text-xs text-ink-muted">Case {{ $request->case_number }}
                                 @if($request->mrn) · MRN {{ $request->mrn }}@endif
                             </p>
-                            <p class="text-xs text-ink-muted">Dr. {{ $request->doctor->name }}</p>
+                            <p class="text-xs text-ink-muted">
+                                Dr. {{ $request->doctor->name }} · {{ $request->created_at->format('d M Y, g:i A') }}
+                            </p>
                         </div>
                         <x-status-badge :status="$request->status" />
                     </div>
@@ -46,34 +49,70 @@
                         </div>
                     @endif
 
+                    {{-- Stain details toggle --}}
+                    <button @click="open = !open"
+                        class="flex w-full items-center justify-between rounded-xl border border-gray-200 px-3 py-2 text-xs font-medium text-ink-muted transition hover:bg-gray-50">
+                        <span x-text="open ? 'Hide details' : 'View stain details'"></span>
+                        <svg class="h-4 w-4 transition-transform duration-200" :class="open ? 'rotate-180' : ''"
+                            fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+                        </svg>
+                    </button>
+
+                    {{-- Stain details panel --}}
+                    <div x-show="open"
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="opacity-0 -translate-y-1"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 -translate-y-1">
+                        <x-stain-type-details :request="$request" :show-attachment-badge="true" />
+                    </div>
+
                     {{-- Action buttons --}}
                     <div class="flex gap-2 flex-wrap">
                         @if($request->status->value === 'accepted')
                             <button wire:click="advance({{ $request->id }}, 'in_progress')"
-                                class="flex-1 rounded-xl bg-indigo-600 py-2.5 text-xs font-semibold text-white min-h-11 transition active:scale-[0.98]">
-                                Start Processing
+                                wire:loading.attr="disabled" wire:target="advance({{ $request->id }}, 'in_progress')"
+                                class="flex-1 rounded-xl bg-indigo-600 py-2.5 text-xs font-semibold text-white min-h-11 transition active:scale-[0.98] disabled:opacity-60">
+                                <span wire:loading.remove wire:target="advance({{ $request->id }}, 'in_progress')">Start Processing</span>
+                                <span wire:loading wire:target="advance({{ $request->id }}, 'in_progress')" class="inline-flex items-center justify-center gap-1.5">
+                                    <x-spinner class="h-3.5 w-3.5" /> Working…
+                                </span>
                             </button>
                             <button wire:click="startOnHold({{ $request->id }})"
+                                wire:loading.class="opacity-50 pointer-events-none" wire:target="startOnHold({{ $request->id }})"
                                 class="rounded-xl border border-orange-300 px-4 py-2.5 text-xs font-semibold text-orange-600 min-h-11 transition hover:bg-orange-50">
                                 On Hold
                             </button>
                         @elseif($request->status->value === 'in_progress')
                             <button wire:click="advance({{ $request->id }}, 'completed')"
-                                class="flex-1 rounded-xl bg-green-600 py-2.5 text-xs font-semibold text-white min-h-11 transition active:scale-[0.98]">
-                                Mark Complete
+                                wire:loading.attr="disabled" wire:target="advance({{ $request->id }}, 'completed')"
+                                class="flex-1 rounded-xl bg-green-600 py-2.5 text-xs font-semibold text-white min-h-11 transition active:scale-[0.98] disabled:opacity-60">
+                                <span wire:loading.remove wire:target="advance({{ $request->id }}, 'completed')">Mark Complete</span>
+                                <span wire:loading wire:target="advance({{ $request->id }}, 'completed')" class="inline-flex items-center justify-center gap-1.5">
+                                    <x-spinner class="h-3.5 w-3.5" /> Saving…
+                                </span>
                             </button>
                             <button wire:click="startOnHold({{ $request->id }})"
+                                wire:loading.class="opacity-50 pointer-events-none" wire:target="startOnHold({{ $request->id }})"
                                 class="rounded-xl border border-orange-300 px-4 py-2.5 text-xs font-semibold text-orange-600 min-h-11 transition hover:bg-orange-50">
                                 On Hold
                             </button>
                             <button wire:click="startAttach({{ $request->id }})"
+                                wire:loading.class="opacity-50 pointer-events-none" wire:target="startAttach({{ $request->id }})"
                                 class="rounded-xl border border-gray-300 px-4 py-2.5 text-xs font-semibold text-ink-muted min-h-11 transition hover:bg-gray-50">
                                 Attach Result
                             </button>
                         @elseif($request->status->value === 'on_hold')
                             <button wire:click="advance({{ $request->id }}, 'in_progress')"
-                                class="flex-1 rounded-xl bg-primary py-2.5 text-xs font-semibold text-white min-h-11 transition active:scale-[0.98]">
-                                Resume
+                                wire:loading.attr="disabled" wire:target="advance({{ $request->id }}, 'in_progress')"
+                                class="flex-1 rounded-xl bg-primary py-2.5 text-xs font-semibold text-white min-h-11 transition active:scale-[0.98] disabled:opacity-60">
+                                <span wire:loading.remove wire:target="advance({{ $request->id }}, 'in_progress')">Resume</span>
+                                <span wire:loading wire:target="advance({{ $request->id }}, 'in_progress')" class="inline-flex items-center justify-center gap-1.5">
+                                    <x-spinner class="h-3.5 w-3.5" /> Resuming…
+                                </span>
                             </button>
                         @endif
                     </div>
@@ -127,9 +166,12 @@
             </div>
             <div class="flex gap-3">
                 <button wire:click="confirmOnHold"
-                    class="flex-1 rounded-xl bg-orange-500 py-3 text-sm font-semibold text-white min-h-12 transition active:scale-[0.98]">
+                    wire:loading.attr="disabled" wire:target="confirmOnHold"
+                    class="flex-1 rounded-xl bg-orange-500 py-3 text-sm font-semibold text-white min-h-12 transition active:scale-[0.98] disabled:opacity-60">
                     <span wire:loading.remove wire:target="confirmOnHold">Confirm Hold</span>
-                    <span wire:loading wire:target="confirmOnHold">Saving…</span>
+                    <span wire:loading wire:target="confirmOnHold" class="inline-flex items-center justify-center gap-1.5">
+                        <x-spinner class="h-4 w-4" /> Saving…
+                    </span>
                 </button>
                 <button wire:click="cancelOnHold"
                     class="rounded-xl border border-gray-300 px-5 py-3 text-sm font-medium text-ink-muted min-h-12">
@@ -168,9 +210,12 @@
 
             <div class="flex gap-3">
                 <button wire:click="saveAttachments"
-                    class="flex-1 rounded-xl bg-primary py-3 text-sm font-semibold text-white min-h-12 transition active:scale-[0.98]">
+                    wire:loading.attr="disabled" wire:target="saveAttachments"
+                    class="flex-1 rounded-xl bg-primary py-3 text-sm font-semibold text-white min-h-12 transition active:scale-[0.98] disabled:opacity-60">
                     <span wire:loading.remove wire:target="saveAttachments">Upload</span>
-                    <span wire:loading wire:target="saveAttachments">Uploading…</span>
+                    <span wire:loading wire:target="saveAttachments" class="inline-flex items-center justify-center gap-1.5">
+                        <x-spinner class="h-4 w-4" /> Uploading…
+                    </span>
                 </button>
                 <button wire:click="cancelAttach"
                     class="rounded-xl border border-gray-300 px-5 py-3 text-sm font-medium text-ink-muted min-h-12">

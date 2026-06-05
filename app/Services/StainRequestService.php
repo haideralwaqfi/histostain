@@ -47,6 +47,7 @@ class StainRequestService
             // Attach requisition files to the media collection
             foreach ($files as $file) {
                 $request->addMedia($file->getRealPath())
+                    ->preservingOriginal()
                     ->usingFileName($file->getClientOriginalName())
                     ->toMediaCollection('requisition_attachments');
             }

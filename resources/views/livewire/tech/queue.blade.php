@@ -16,11 +16,13 @@
         {{-- Type filter --}}
         <div class="flex gap-2 mt-3 overflow-x-auto pb-1 -mx-1 px-1">
             <button wire:click="$set('filterType', '')"
+                wire:loading.class="opacity-50 pointer-events-none"
                 class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterType === '' ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted hover:bg-gray-200' }}">
                 All types
             </button>
             @foreach($typeOptions as $t)
                 <button wire:click="$set('filterType', '{{ $t->value }}')"
+                    wire:loading.class="opacity-50 pointer-events-none"
                     class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterType === $t->value ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted hover:bg-gray-200' }}">
                     {{ $t->shortLabel() }}
                 </button>
@@ -30,8 +32,9 @@
 
     <div class="px-4 py-3 space-y-3">
         @forelse($requests as $request)
-            <div class="rounded-2xl bg-white border shadow-card overflow-hidden
-                {{ $request->isStat() ? 'border-red-300 stat-ring' : 'border-gray-200' }}">
+            <div x-data="{ open: false }"
+                class="rounded-2xl bg-white border shadow-card overflow-hidden
+                    {{ $request->isStat() ? 'border-red-300 stat-ring' : 'border-gray-200' }}">
 
                 {{-- STAT banner --}}
                 @if($request->isStat())
@@ -42,6 +45,7 @@
                 @endif
 
                 <div class="p-4">
+                    {{-- Request summary --}}
                     <div class="flex items-start justify-between gap-2 mb-3">
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2 flex-wrap">
@@ -55,7 +59,7 @@
                                 <p class="text-xs text-ink-muted">MRN: {{ $request->mrn }}</p>
                             @endif
                             <p class="text-xs text-ink-muted">
-                                Dr. {{ $request->doctor->name }} · {{ $request->created_at->diffForHumans() }}
+                                Dr. {{ $request->doctor->name }} · {{ $request->created_at->format('d M Y, g:i A') }}
                             </p>
                         </div>
                         @if(isset($request->type_data['blocks']))
@@ -65,6 +69,30 @@
                         @endif
                     </div>
 
+                    {{-- Details toggle --}}
+                    <button @click="open = !open"
+                        class="flex w-full items-center justify-between rounded-xl border border-gray-200 px-3 py-2 text-xs font-medium text-ink-muted transition hover:bg-gray-50 mb-3">
+                        <span x-text="open ? 'Hide details' : 'View stain details'"></span>
+                        <svg class="h-4 w-4 transition-transform duration-200"
+                            :class="open ? 'rotate-180' : ''"
+                            fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+                        </svg>
+                    </button>
+
+                    {{-- Stain details panel --}}
+                    <div x-show="open"
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="opacity-0 -translate-y-1"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 -translate-y-1"
+                        class="mb-3">
+                        <x-stain-type-details :request="$request" />
+                    </div>
+
+                    {{-- Accept button --}}
                     <button
                         wire:click="accept({{ $request->id }})"
                         wire:loading.attr="disabled"

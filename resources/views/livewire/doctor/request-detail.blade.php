@@ -29,6 +29,12 @@
 
         {{-- Details card --}}
         <div class="rounded-2xl border border-gray-200 bg-white divide-y divide-gray-100">
+            <div class="flex justify-between px-4 py-3 text-sm">
+                <span class="text-ink-muted">Ordered</span>
+                <span class="font-medium text-ink" title="{{ $request->created_at->toDateTimeString() }}">
+                    {{ $request->created_at->format('d M Y, g:i A') }}
+                </span>
+            </div>
             @if($request->mrn)
                 <div class="flex justify-between px-4 py-3 text-sm">
                     <span class="text-ink-muted">MRN</span>
@@ -55,37 +61,10 @@
             @endif
         </div>
 
-        {{-- Type data summary --}}
+        {{-- Stain type details --}}
         <div class="rounded-2xl border border-gray-200 bg-white p-4">
-            <h3 class="text-sm font-semibold text-ink-muted uppercase tracking-wide mb-3">Request Details</h3>
-            @if(isset($request->type_data['blocks']))
-                @foreach($request->type_data['blocks'] as $i => $block)
-                    <div class="mb-3 last:mb-0 rounded-xl border border-gray-100 bg-gray-50 p-3">
-                        <p class="text-xs font-semibold text-ink-muted mb-2">Block {{ $i + 1 }}@if(isset($block['block_id'])) — {{ $block['block_id'] }}@endif</p>
-                        <dl class="space-y-1">
-                            @foreach($block as $key => $val)
-                                @if($key !== 'block_id' && $val !== null && $val !== '' && $val !== false)
-                                    <div class="flex gap-2 text-sm">
-                                        <dt class="shrink-0 text-ink-muted capitalize">{{ str_replace('_', ' ', $key) }}:</dt>
-                                        <dd class="text-ink">{{ is_bool($val) ? ($val ? 'Yes' : 'No') : $val }}</dd>
-                                    </div>
-                                @endif
-                            @endforeach
-                        </dl>
-                    </div>
-                @endforeach
-            @else
-                <dl class="space-y-1">
-                    @foreach($request->type_data as $key => $val)
-                        @if($val !== null && $val !== '')
-                            <div class="flex gap-2 text-sm">
-                                <dt class="shrink-0 text-ink-muted capitalize">{{ str_replace('_', ' ', $key) }}:</dt>
-                                <dd class="text-ink">{{ $val }}</dd>
-                            </div>
-                        @endif
-                    @endforeach
-                </dl>
-            @endif
+            <h3 class="text-sm font-semibold text-ink-muted uppercase tracking-wide mb-3">Stain Details</h3>
+            <x-stain-type-details :request="$request" :show-attachment-badge="false" />
         </div>
 
         {{-- Requisition attachments --}}
@@ -152,9 +131,13 @@
                     <p class="text-sm font-semibold text-red-700">Cancel this request?</p>
                     <p class="text-sm text-red-600">This action cannot be undone. The request will be marked as cancelled.</p>
                     <div class="flex gap-3">
-                        <button wire:click="cancelRequest" class="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white min-h-11">
+                        <button wire:click="cancelRequest"
+                            wire:loading.attr="disabled" wire:target="cancelRequest"
+                            class="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white min-h-11 disabled:opacity-60">
                             <span wire:loading.remove wire:target="cancelRequest">Yes, cancel</span>
-                            <span wire:loading wire:target="cancelRequest">Cancelling…</span>
+                            <span wire:loading wire:target="cancelRequest" class="inline-flex items-center justify-center gap-1.5">
+                                <x-spinner class="h-3.5 w-3.5" /> Cancelling…
+                            </span>
                         </button>
                         <button wire:click="dismissCancel" class="rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-medium text-ink-muted min-h-11">
                             Keep
@@ -162,7 +145,9 @@
                     </div>
                 </div>
             @else
-                <button wire:click="startCancel" class="w-full rounded-xl border border-red-200 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition min-h-12">
+                <button wire:click="startCancel"
+                    wire:loading.class="opacity-50 pointer-events-none" wire:target="startCancel"
+                    class="w-full rounded-xl border border-red-200 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition min-h-12">
                     Cancel request
                 </button>
             @endif

@@ -7,6 +7,7 @@ use App\Enums\StainRequestType;
 use App\Services\StainRequestService;
 use App\StainTypes\StainTypeRegistry;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -19,41 +20,51 @@ class CreateRequest extends Component
     public string $step = 'type'; // 'type' | 'details' | 'review'
 
     // Shared fields
-    public string $type = '';
+    public array $selectedTypes = [];
     public string $priority = 'routine';
     public string $mrn = '';
     public string $labNumber = '';
     public string $caseNumber = '';
     public string $notes = '';
 
-    // Type-specific structured data (initialised when type is selected)
-    public array $typeData = [];
+    // Per-type structured data keyed by StainRequestType value
+    public array $typesData = [];
 
-    // Optional file attachments
+    // Shared optional file attachments
     public array $attachments = [];
 
-    public function updatedType(string $value): void
+    // ── Type selection ─────────────────────────────────────────
+
+    public function toggleType(string $typeValue): void
     {
-        if ($value) {
-            $this->typeData = StainTypeRegistry::get($value)->defaultData();
+        if (in_array($typeValue, $this->selectedTypes, true)) {
+            $this->selectedTypes = array_values(array_filter(
+                $this->selectedTypes,
+                fn($t) => $t !== $typeValue,
+            ));
+        } else {
+            $this->selectedTypes[] = $typeValue;
+            // Preserve data if the doctor de-selects and re-selects a type
+            if (!isset($this->typesData[$typeValue])) {
+                $this->typesData[$typeValue] = StainTypeRegistry::get($typeValue)->defaultData();
+            }
         }
     }
 
-    // ── Block helpers (block-based types only) ─────────────────
+    // ── Block helpers ──────────────────────────────────────────
 
-    public function addBlock(): void
+    public function addBlock(string $typeKey): void
     {
-        $definition = StainTypeRegistry::get($this->type);
+        $definition = StainTypeRegistry::get($typeKey);
         if ($definition->supportsMultipleBlocks()) {
-            $blank = $definition->defaultData()['blocks'][0];
-            $this->typeData['blocks'][] = $blank;
+            $this->typesData[$typeKey]['blocks'][] = $definition->defaultData()['blocks'][0];
         }
     }
 
-    public function removeBlock(int $index): void
+    public function removeBlock(string $typeKey, int $index): void
     {
-        if (isset($this->typeData['blocks']) && count($this->typeData['blocks']) > 1) {
-            array_splice($this->typeData['blocks'], $index, 1);
+        if (isset($this->typesData[$typeKey]['blocks']) && count($this->typesData[$typeKey]['blocks']) > 1) {
+            array_splice($this->typesData[$typeKey]['blocks'], $index, 1);
         }
     }
 
@@ -61,16 +72,18 @@ class CreateRequest extends Component
 
     public function goToDetails(): void
     {
-        $this->validate([
-            'type' => 'required|in:' . implode(',', array_column(StainRequestType::cases(), 'value')),
-        ]);
+        $this->validate(
+            ['selectedTypes' => 'required|array|min:1'],
+            ['selectedTypes.required' => 'Select at least one stain type.',
+             'selectedTypes.min'      => 'Select at least one stain type.'],
+        );
         $this->step = 'details';
     }
 
     public function goToReview(): void
     {
         $this->validateShared();
-        $this->validateTypeData();
+        $this->validateAllTypesData();
         $this->step = 'review';
     }
 
@@ -89,7 +102,7 @@ class CreateRequest extends Component
     public function submit(StainRequestService $service): void
     {
         $this->validateShared();
-        $this->validateTypeData();
+        $this->validateAllTypesData();
         $this->validate([
             'attachments'   => 'nullable|array|max:5',
             'attachments.*' => 'file|max:10240|mimes:pdf,jpg,jpeg,png,gif',
@@ -97,21 +110,28 @@ class CreateRequest extends Component
 
         $this->authorize('create', \App\Models\StainRequest::class);
 
-        $request = $service->create(
-            Auth::user(),
-            [
-                'type'       => $this->type,
-                'priority'   => $this->priority,
-                'mrn'        => $this->mrn ?: null,
-                'lab_number' => $this->labNumber ?: null,
-                'case_number' => $this->caseNumber,
-                'notes'      => $this->notes ?: null,
-                'type_data'  => $this->typeData,
-            ],
-            $this->attachments,
-        );
+        $shared = [
+            'priority'    => $this->priority,
+            'mrn'         => $this->mrn ?: null,
+            'lab_number'  => $this->labNumber ?: null,
+            'case_number' => $this->caseNumber,
+            'notes'       => $this->notes ?: null,
+        ];
 
-        $this->redirect(route('doctor.requests.show', $request->ulid), navigate: true);
+        DB::transaction(function () use ($service, $shared) {
+            foreach ($this->selectedTypes as $typeKey) {
+                $service->create(
+                    Auth::user(),
+                    array_merge($shared, [
+                        'type'      => $typeKey,
+                        'type_data' => $this->typesData[$typeKey],
+                    ]),
+                    $this->attachments,
+                );
+            }
+        });
+
+        $this->redirect(route('doctor.requests'), navigate: true);
     }
 
     // ── Private validation helpers ─────────────────────────────
@@ -127,10 +147,17 @@ class CreateRequest extends Component
         ]);
     }
 
-    private function validateTypeData(): void
+    private function validateAllTypesData(): void
     {
-        $rules = StainTypeRegistry::get($this->type)->rules();
-        $this->validate($rules);
+        foreach ($this->selectedTypes as $typeKey) {
+            $rules = StainTypeRegistry::get($typeKey)->rules();
+            $renamedRules = [];
+            foreach ($rules as $key => $rule) {
+                // Rules use 'typeData.*' prefix — remap to 'typesData.{typeKey}.*'
+                $renamedRules[preg_replace('/^typeData/', 'typesData.' . $typeKey, $key)] = $rule;
+            }
+            $this->validate($renamedRules);
+        }
     }
 
     // ── Render ────────────────────────────────────────────────
@@ -138,9 +165,8 @@ class CreateRequest extends Component
     public function render()
     {
         return view('livewire.doctor.create-request', [
-            'typeOptions'  => StainTypeRegistry::options(),
-            'priorities'   => StainRequestPriority::cases(),
-            'typeDefinition' => $this->type ? StainTypeRegistry::get($this->type) : null,
+            'typeOptions' => StainTypeRegistry::options(),
+            'priorities'  => StainRequestPriority::cases(),
         ]);
     }
 }

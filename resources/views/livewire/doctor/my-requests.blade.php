@@ -12,11 +12,13 @@
         {{-- Status filter chips --}}
         <div class="flex gap-2 mt-3 overflow-x-auto pb-1 -mx-1 px-1">
             <button wire:click="$set('filterStatus', '')"
+                wire:loading.class="opacity-50 pointer-events-none"
                 class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterStatus === '' ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted hover:bg-gray-200' }}">
                 All
             </button>
             @foreach($statuses as $s)
                 <button wire:click="$set('filterStatus', '{{ $s->value }}')"
+                    wire:loading.class="opacity-50 pointer-events-none"
                     class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterStatus === $s->value ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted hover:bg-gray-200' }}">
                     {{ $s->label() }}
                 </button>
@@ -50,7 +52,7 @@
                         <x-status-badge :status="$request->status" />
                     </div>
                     <div class="mt-2 flex items-center justify-between text-xs text-ink-muted">
-                        <span>{{ $request->created_at->diffForHumans() }}</span>
+                        <span>{{ $request->created_at->format('d M Y, g:i A') }}</span>
                         @if($request->assignedTech)
                             <span>Tech: {{ $request->assignedTech->name }}</span>
                         @endif

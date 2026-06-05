@@ -30,10 +30,10 @@ class SpecialStainType implements StainTypeDefinition
         return [
             'blocks' => [
                 [
-                    'block_id' => '',
-                    'stain' => '',
+                    'block_id'    => '',
+                    'stains'      => [],
                     'stain_other' => '',
-                    'indication' => '',
+                    'indication'  => '',
                     'section_count' => 1,
                 ],
             ],
@@ -43,11 +43,12 @@ class SpecialStainType implements StainTypeDefinition
     public function rules(): array
     {
         return [
-            'typeData.blocks' => 'required|array|min:1',
-            'typeData.blocks.*.block_id' => 'required|string|max:100',
-            'typeData.blocks.*.stain' => 'required|string|in:' . implode(',', array_keys(self::STAIN_OPTIONS)),
+            'typeData.blocks'              => 'required|array|min:1',
+            'typeData.blocks.*.block_id'   => 'required|string|max:100',
+            'typeData.blocks.*.stains'     => 'required|array|min:1',
+            'typeData.blocks.*.stains.*'   => 'string|in:' . implode(',', array_keys(self::STAIN_OPTIONS)),
             'typeData.blocks.*.stain_other' => 'nullable|string|max:200',
-            'typeData.blocks.*.indication' => 'required|string|max:500',
+            'typeData.blocks.*.indication' => 'nullable|string|max:500',
             'typeData.blocks.*.section_count' => 'required|integer|min:1|max:50',
         ];
     }
