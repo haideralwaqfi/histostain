@@ -2,6 +2,7 @@
 
 namespace App\StainTypes\Types;
 
+use App\Models\StainOption;
 use App\StainTypes\Contracts\StainTypeDefinition;
 
 class SpecialStainType implements StainTypeDefinition
@@ -18,6 +19,11 @@ class SpecialStainType implements StainTypeDefinition
         'ptah' => 'PTAH',
         'other' => 'Other',
     ];
+
+    public static function options(): array
+    {
+        return StainOption::optionsArray('special_stain');
+    }
 
     public function label(): string { return 'Special Stain'; }
 
@@ -46,7 +52,7 @@ class SpecialStainType implements StainTypeDefinition
             'typeData.blocks'              => 'required|array|min:1',
             'typeData.blocks.*.block_id'   => 'required|string|max:100',
             'typeData.blocks.*.stains'     => 'required|array|min:1',
-            'typeData.blocks.*.stains.*'   => 'string|in:' . implode(',', array_keys(self::STAIN_OPTIONS)),
+            'typeData.blocks.*.stains.*'   => 'string|in:' . implode(',', array_keys(StainOption::optionsArray('special_stain'))),
             'typeData.blocks.*.stain_other' => 'nullable|string|max:200',
             'typeData.blocks.*.indication' => 'nullable|string|max:500',
             'typeData.blocks.*.section_count' => 'required|integer|min:1|max:50',

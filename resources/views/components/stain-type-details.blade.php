@@ -5,18 +5,13 @@
     $blocks = $td['blocks'] ?? null;
     $attachmentCount = $showAttachmentBadge ? $request->getMedia('requisition_attachments')->count() : 0;
 
-    $specialStainLabels = [
-        'pas' => 'PAS', 'masson_trichrome' => 'Masson Trichrome',
-        'ziehl_neelsen' => 'Ziehl-Neelsen', 'reticulin' => 'Reticulin',
-        'congo_red' => 'Congo Red', 'alcian_blue' => 'Alcian Blue',
-        'giemsa' => 'Giemsa', 'grocott' => 'Grocott',
-        'ptah' => 'PTAH', 'other' => 'Other',
-    ];
+    $specialStainLabels = \App\StainTypes\Types\SpecialStainType::options();
     $cytologyStainLabels = [
         'pap' => 'Pap', 'h_and_e' => 'H&E', 'diff_quik' => 'Diff-Quik',
         'mucicarmine' => 'Mucicarmine', 'pas' => 'PAS', 'other' => 'Other',
     ];
     $decalcMethodLabels = ['edta' => 'EDTA', 'acid' => 'Acid', 'other' => 'Other'];
+    $ihcAntibodyLabels = \App\StainTypes\Types\IhcType::options();
 @endphp
 
 <div class="space-y-2 text-xs">
@@ -45,8 +40,14 @@
 
                 switch ($request->type->value) {
                     case 'ihc':
+                        $antibodyKeys = $block['antibodies'] ?? (isset($block['antibody']) && $block['antibody'] ? [$block['antibody']] : []);
+                        $antibodyLabels = array_map(function ($k) use ($ihcAntibodyLabels, $block) {
+                            return $k === 'other' && !empty($block['antibody_other'])
+                                ? $block['antibody_other']
+                                : ($ihcAntibodyLabels[$k] ?? $k);
+                        }, $antibodyKeys);
                         $rows = array_filter([
-                            'Antibody'   => $block['antibody'] ?? null,
+                            'Antibody'   => $antibodyLabels ? implode(', ', $antibodyLabels) : null,
                             'Clone'      => $block['clone'] ?: null,
                             'Dilution'   => $block['dilution'] ?: null,
                             'Indication' => $block['clinical_indication'] ?? null,

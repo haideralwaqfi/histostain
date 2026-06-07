@@ -6,6 +6,7 @@ use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Admin\PendingUsersQueue;
 use App\Livewire\Admin\RequestBrowser;
 use App\Livewire\Admin\RequestDetail as AdminRequestDetail;
+use App\Livewire\Admin\StainConfig;
 use App\Livewire\Admin\UserManagement;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\PendingGate;
@@ -78,6 +79,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::get('/requests', RequestBrowser::class)->name('requests');
         Route::get('/requests/{ulid}', AdminRequestDetail::class)->name('requests.show');
         Route::get('/users', UserManagement::class)->name('users');
+        Route::get('/config', StainConfig::class)->name('config');
     });
 
     // ── Doctor ─────────────────────────────────────────────────

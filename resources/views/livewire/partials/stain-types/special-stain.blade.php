@@ -26,7 +26,7 @@
                         Stain(s) <span class="text-red-500">*</span>
                     </p>
                     <div class="flex flex-wrap gap-2">
-                        @foreach(\App\StainTypes\Types\SpecialStainType::STAIN_OPTIONS as $val => $lbl)
+                        @foreach(\App\StainTypes\Types\SpecialStainType::options() as $val => $lbl)
                             <label
                                 :class="selected.includes('{{ $val }}')
                                     ? 'border-primary bg-primary/10 text-primary'
