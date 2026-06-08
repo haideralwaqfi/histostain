@@ -25,6 +25,11 @@ class SpecialStainType implements StainTypeDefinition
         return StainOption::optionsArray('special_stain');
     }
 
+    public static function allOptionsWithMeta(): array
+    {
+        return StainOption::allOptionsWithMeta('special_stain');
+    }
+
     public function label(): string { return 'Special Stain'; }
 
     public function supportsMultipleBlocks(): bool { return true; }

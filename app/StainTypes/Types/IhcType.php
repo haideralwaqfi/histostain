@@ -75,6 +75,11 @@ class IhcType implements StainTypeDefinition
         return StainOption::optionsArray('ihc');
     }
 
+    public static function allOptionsWithMeta(): array
+    {
+        return StainOption::allOptionsWithMeta('ihc');
+    }
+
     public function label(): string { return 'IHC / Immunohistochemistry'; }
 
     public function supportsMultipleBlocks(): bool { return true; }

@@ -19,6 +19,53 @@ class StainConfig extends Component
     public ?int $editingId = null;
     public string $editingLabel = '';
 
+    // Inactivation reasons keyed by option ID — auto-saved on blur
+    public array $reasons = [];
+
+    // ── Lifecycle ─────────────────────────────────────────────────
+
+    public function mount(): void
+    {
+        $this->loadReasons();
+    }
+
+    private function loadReasons(): void
+    {
+        StainOption::where('is_active', false)->get()
+            ->each(fn($opt) => $this->reasons[$opt->id] = $opt->inactive_reason ?? '');
+    }
+
+    // ── Active / Inactive toggle ──────────────────────────────────
+
+    public function toggleActive(int $id): void
+    {
+        $option    = StainOption::findOrFail($id);
+        $newActive = ! $option->is_active;
+
+        $option->update([
+            'is_active'       => $newActive,
+            'inactive_reason' => $newActive ? null : $option->inactive_reason,
+        ]);
+
+        if ($newActive) {
+            unset($this->reasons[$id]);
+        } else {
+            $this->reasons[$id] = $option->inactive_reason ?? '';
+        }
+
+        StainOption::clearCache($option->type);
+    }
+
+    /** Auto-called by Livewire when any reasons.{id} changes (wire:model.blur). */
+    public function updatedReasons(string $value, string $key): void
+    {
+        $option = StainOption::find((int) $key);
+        if ($option && ! $option->is_active) {
+            $option->update(['inactive_reason' => $value ?: null]);
+            StainOption::clearCache($option->type);
+        }
+    }
+
     // ── Add ───────────────────────────────────────────────────────
 
     public function addOption(): void
@@ -28,7 +75,6 @@ class StainConfig extends Component
         $base = Str::slug(trim($this->newLabel), '_');
         $key  = $base ?: 'option';
 
-        // Ensure uniqueness within this type
         $suffix = 1;
         while (StainOption::where('type', $this->tab)->where('key', $key)->exists()) {
             $key = $base . '_' . $suffix++;
@@ -41,6 +87,7 @@ class StainConfig extends Component
             'key'        => $key,
             'label'      => trim($this->newLabel),
             'sort_order' => $maxOrder + 1,
+            'is_active'  => true,
         ]);
 
         StainOption::clearCache($this->tab);
@@ -56,13 +103,15 @@ class StainConfig extends Component
         $option->delete();
         StainOption::clearCache($type);
 
+        unset($this->reasons[$id]);
+
         if ($this->editingId === $id) {
             $this->editingId    = null;
             $this->editingLabel = '';
         }
     }
 
-    // ── Edit ──────────────────────────────────────────────────────
+    // ── Edit label ────────────────────────────────────────────────
 
     public function startEdit(int $id): void
     {

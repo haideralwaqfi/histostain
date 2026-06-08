@@ -20,26 +20,52 @@
                     @error($prefix . '.blocks.' . $i . '.block_id') <x-form.error>{{ $message }}</x-form.error> @enderror
                 </div>
 
-                {{-- Pill checkboxes — toggled by Alpine instantly, synced to Livewire on next commit --}}
+                {{-- Pill checkboxes for stains --}}
                 <div>
                     <p class="block text-sm font-medium text-ink mb-2">
                         Stain(s) <span class="text-red-500">*</span>
                     </p>
                     <div class="flex flex-wrap gap-2">
-                        @foreach(\App\StainTypes\Types\SpecialStainType::options() as $val => $lbl)
-                            <label
-                                :class="selected.includes('{{ $val }}')
-                                    ? 'border-primary bg-primary/10 text-primary'
-                                    : 'border-gray-200 bg-white text-ink-muted hover:border-gray-300'"
-                                class="flex cursor-pointer items-center rounded-full border-2 px-3 py-1 text-xs font-semibold transition select-none">
-                                <input
-                                    x-model="selected"
-                                    type="checkbox"
-                                    value="{{ $val }}"
-                                    class="sr-only"
-                                >
-                                {{ $lbl }}
-                            </label>
+                        @foreach(\App\StainTypes\Types\SpecialStainType::allOptionsWithMeta() as $val => $meta)
+                            @if($meta['is_active'])
+                                {{-- Active: normal selectable pill --}}
+                                <label
+                                    :class="selected.includes('{{ $val }}')
+                                        ? 'border-primary bg-primary/10 text-primary'
+                                        : 'border-gray-200 bg-white text-ink-muted hover:border-gray-300'"
+                                    class="flex cursor-pointer items-center rounded-full border-2 px-3 py-1 text-xs font-semibold transition select-none">
+                                    <input
+                                        x-model="selected"
+                                        type="checkbox"
+                                        value="{{ $val }}"
+                                        class="sr-only"
+                                    >
+                                    {{ $meta['label'] }}
+                                </label>
+                            @else
+                                {{-- Inactive: red pill with reason popup on tap --}}
+                                <div class="relative" x-data="{ open: false }">
+                                    <button
+                                        type="button"
+                                        @click="open = !open"
+                                        class="flex items-center gap-1 rounded-full border-2 border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-400 cursor-not-allowed select-none">
+                                        {{ $meta['label'] }}
+                                        <svg class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+                                        </svg>
+                                    </button>
+                                    <div
+                                        x-show="open"
+                                        x-cloak
+                                        @click.outside="open = false"
+                                        class="absolute bottom-full left-0 mb-2 z-50 w-56 rounded-xl border border-red-100 bg-white shadow-xl p-3">
+                                        <p class="text-xs font-semibold text-red-600 mb-1">Currently Unavailable</p>
+                                        <p class="text-xs text-gray-500 leading-relaxed">
+                                            {{ $meta['inactive_reason'] ?: 'This stain is not currently available.' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
                         @endforeach
                     </div>
                     @error($prefix . '.blocks.' . $i . '.stains') <x-form.error>{{ $message }}</x-form.error> @enderror
