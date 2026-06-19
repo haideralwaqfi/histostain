@@ -63,4 +63,12 @@
         No account?
         <a href="{{ route('register') }}" wire:navigate class="font-medium text-primary hover:underline">Register</a>
     </p>
+
+    <p class="mt-8 text-center text-xs text-ink-muted">
+        &copy; {{ date('Y') }} Developed &amp; designed by
+        <a href="https://www.linkedin.com/in/haider-al-waqfi-pmp-itil-v4-76149480/"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="font-medium text-primary hover:underline">Haider Alwaqfi</a>
+    </p>
 </div>

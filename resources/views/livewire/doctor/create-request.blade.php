@@ -304,7 +304,7 @@
                                 <p class="text-xs text-ink-muted">1 slide</p>
                             @endif
                         </div>
-                        <x-status-badge status="pending" />
+                        <x-status-badge :status="\App\Enums\StainRequestStatus::Pending" />
                     </div>
                 @endforeach
             </div>

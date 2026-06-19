@@ -32,6 +32,15 @@
         <div class="w-full max-w-sm rounded-2xl bg-white px-6 py-8 shadow-card">
             {{ $slot }}
         </div>
+
+        <!-- Credit -->
+        <p class="mt-6 text-center text-xs text-ink-muted">
+            &copy; {{ date('Y') }} Developed &amp; designed by
+            <a href="https://www.linkedin.com/in/haider-al-waqfi-pmp-itil-v4-76149480/"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="font-medium text-primary hover:underline">Haider Alwaqfi</a>
+        </p>
     </div>
 
     @livewireScripts

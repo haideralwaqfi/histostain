@@ -33,8 +33,9 @@ class Queue extends Component
         $this->dispatch('toast', message: 'Request accepted — added to your work queue.', type: 'success');
     }
 
-    public function updatedFilterType(): void
+    public function filterBy(string $type): void
     {
+        $this->filterType = $type;
         $this->resetPage();
     }
 

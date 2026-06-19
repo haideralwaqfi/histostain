@@ -15,14 +15,16 @@
         </div>
         {{-- Type filter --}}
         <div class="flex gap-2 mt-3 overflow-x-auto pb-1 -mx-1 px-1">
-            <button wire:click="$set('filterType', '')"
+            <button wire:click="filterBy('')"
                 wire:loading.class="opacity-50 pointer-events-none"
+                wire:target="filterBy"
                 class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterType === '' ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted hover:bg-gray-200' }}">
                 All types
             </button>
             @foreach($typeOptions as $t)
-                <button wire:click="$set('filterType', '{{ $t->value }}')"
+                <button wire:click="filterBy('{{ $t->value }}')"
                     wire:loading.class="opacity-50 pointer-events-none"
+                    wire:target="filterBy"
                     class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition {{ $filterType === $t->value ? 'bg-primary text-white' : 'bg-gray-100 text-ink-muted hover:bg-gray-200' }}">
                     {{ $t->shortLabel() }}
                 </button>
