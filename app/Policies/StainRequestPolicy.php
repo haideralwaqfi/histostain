@@ -32,6 +32,13 @@ class StainRequestPolicy
         return $user->isDoctor();
     }
 
+    /** Doctor can edit their own request at any status. */
+    public function update(User $user, StainRequest $request): bool
+    {
+        return $user->isDoctor()
+            && $user->id === $request->doctor_id;
+    }
+
     /** Doctor can cancel their own pending request; admin can cancel anything active. */
     public function cancel(User $user, StainRequest $request): bool
     {

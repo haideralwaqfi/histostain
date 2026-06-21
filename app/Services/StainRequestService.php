@@ -8,6 +8,7 @@ use App\Models\StainRequest;
 use App\Models\User;
 use App\Notifications\StainRequestTransitioned;
 use App\Notifications\TechNotifyNewRequest;
+use App\Notifications\TechNotifyRequestUpdated;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
@@ -65,6 +66,37 @@ class StainRequestService
 
             return $request;
         });
+    }
+
+    /**
+     * Update an existing request's fields and optionally attach new files.
+     *
+     * @param  array  $data   validated shared + type_data fields
+     * @param  array  $files  TemporaryUploadedFile instances from Livewire
+     */
+    public function update(StainRequest $request, array $data, array $files = []): void
+    {
+        $request->update([
+            'priority'     => $data['priority'],
+            'mrn'          => $data['mrn'] ?? null,
+            'patient_name' => $data['patient_name'] ?? null,
+            'case_number'  => $data['case_number'],
+            'notes'        => $data['notes'] ?? null,
+            'type_data'    => $data['type_data'],
+        ]);
+
+        foreach ($files as $file) {
+            $request->addMedia($file->getRealPath())
+                ->preservingOriginal()
+                ->usingFileName($file->getClientOriginalName())
+                ->toMediaCollection('requisition_attachments');
+        }
+
+        // Notify the assigned tech only if they have accepted the request
+        $notifiableStatuses = [StainRequestStatus::Accepted, StainRequestStatus::InProgress];
+        if ($request->assignedTech && in_array($request->status, $notifiableStatuses, strict: true)) {
+            $request->assignedTech->notify(new TechNotifyRequestUpdated($request));
+        }
     }
 
     /**

@@ -13,6 +13,7 @@ use App\Livewire\Auth\PendingGate;
 use App\Livewire\Auth\Register;
 use App\Livewire\Auth\RejectedGate;
 use App\Livewire\Doctor\CreateRequest;
+use App\Livewire\Doctor\EditRequest;
 use App\Livewire\Doctor\MyRequests;
 use App\Livewire\Doctor\RequestDetail;
 use App\Livewire\Shared\NotificationInbox;
@@ -88,6 +89,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::middleware('role:doctor')->prefix('doctor')->name('doctor.')->group(function () {
         Route::get('/requests', MyRequests::class)->name('requests');
         Route::get('/requests/new', CreateRequest::class)->name('requests.create');
+        Route::get('/requests/{ulid}/edit', EditRequest::class)->name('requests.edit');
         Route::get('/requests/{ulid}', RequestDetail::class)->name('requests.show');
     });
 
