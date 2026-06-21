@@ -4,7 +4,7 @@
         stain: @entangle($prefix . '.stain')
     }">
 
-    <x-form.input wire:model="{{ $prefix }}.slide_id" label="Slide ID" required />
+    <x-form.input wire:model="{{ $prefix }}.slide_id" label="Block ID" required />
     @error($prefix . '.slide_id') <x-form.error>{{ $message }}</x-form.error> @enderror
 
     <div>

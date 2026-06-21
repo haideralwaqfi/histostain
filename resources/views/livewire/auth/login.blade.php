@@ -1,6 +1,12 @@
 <div>
     <h2 class="mb-6 text-center text-xl font-semibold text-ink">Sign in</h2>
 
+    @if(session('google_error'))
+        <div class="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+            {{ session('google_error') }}
+        </div>
+    @endif
+
     <form wire:submit="login" class="space-y-4" novalidate>
         <div>
             <label for="email" class="block text-sm font-medium text-ink">Email</label>

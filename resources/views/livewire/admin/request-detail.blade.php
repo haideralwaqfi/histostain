@@ -39,10 +39,10 @@
                     <span class="font-medium text-ink">{{ $request->mrn }}</span>
                 </div>
             @endif
-            @if($request->lab_number)
+            @if($request->patient_name)
                 <div class="flex justify-between px-4 py-3 text-sm">
-                    <span class="text-ink-muted">Lab number</span>
-                    <span class="font-medium text-ink">{{ $request->lab_number }}</span>
+                    <span class="text-ink-muted">Patient name</span>
+                    <span class="font-medium text-ink">{{ $request->patient_name }}</span>
                 </div>
             @endif
             <div class="flex justify-between px-4 py-3 text-sm">
@@ -102,10 +102,10 @@
                         <p class="text-xs font-semibold text-ink-muted mb-2">Block {{ $i + 1 }}@if(isset($block['block_id'])) — {{ $block['block_id'] }}@endif</p>
                         <dl class="space-y-1">
                             @foreach($block as $key => $val)
-                                @if($key !== 'block_id' && $val !== null && $val !== '' && $val !== false)
+                                @if($key !== 'block_id' && $val !== null && $val !== '' && $val !== false && !(is_array($val) && empty($val)))
                                     <div class="flex gap-2 text-sm">
                                         <dt class="shrink-0 text-ink-muted capitalize">{{ str_replace('_', ' ', $key) }}:</dt>
-                                        <dd class="text-ink">{{ is_bool($val) ? ($val ? 'Yes' : 'No') : $val }}</dd>
+                                        <dd class="text-ink">{{ is_bool($val) ? ($val ? 'Yes' : 'No') : (is_array($val) ? implode(', ', $val) : $val) }}</dd>
                                     </div>
                                 @endif
                             @endforeach
@@ -115,10 +115,10 @@
             @else
                 <dl class="space-y-1">
                     @foreach($request->type_data as $key => $val)
-                        @if($val !== null && $val !== '')
+                        @if($val !== null && $val !== '' && $val !== false && !(is_array($val) && empty($val)))
                             <div class="flex gap-2 text-sm">
                                 <dt class="shrink-0 text-ink-muted capitalize">{{ str_replace('_', ' ', $key) }}:</dt>
-                                <dd class="text-ink">{{ $val }}</dd>
+                                <dd class="text-ink">{{ is_bool($val) ? ($val ? 'Yes' : 'No') : (is_array($val) ? implode(', ', $val) : $val) }}</dd>
                             </div>
                         @endif
                     @endforeach

@@ -1,4 +1,4 @@
-{{-- Re-embedding --}}
+{{-- IF Stains --}}
 <div class="space-y-4">
     @foreach($typeData['blocks'] ?? [] as $i => $block)
         <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-3">
@@ -12,10 +12,11 @@
                 <x-form.input wire:model="{{ $prefix }}.blocks.{{ $i }}.block_id" label="Block ID" required />
                 @error($prefix . '.blocks.' . $i . '.block_id') <x-form.error>{{ $message }}</x-form.error> @enderror
 
-                <x-form.textarea wire:model="{{ $prefix }}.blocks.{{ $i }}.reason" label="Reason for re-embedding" rows="2" />
-                @error($prefix . '.blocks.' . $i . '.reason') <x-form.error>{{ $message }}</x-form.error> @enderror
+                <x-form.input wire:model="{{ $prefix }}.blocks.{{ $i }}.panel" label="Panel / Antibodies" placeholder="e.g. IgG, IgA, IgM, C3, C1q" />
 
-                <x-form.textarea wire:model="{{ $prefix }}.blocks.{{ $i }}.orientation_instructions" label="Orientation instructions" rows="2" />
+                <x-form.input wire:model="{{ $prefix }}.blocks.{{ $i }}.fixation" label="Fixation method" placeholder="e.g. Frozen, Michel's" />
+
+                <x-form.textarea wire:model="{{ $prefix }}.blocks.{{ $i }}.indication" label="Indication" rows="2" />
             </div>
         </div>
     @endforeach

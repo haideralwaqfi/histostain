@@ -21,11 +21,11 @@
                     <x-form.input wire:model="{{ $prefix }}.blocks.{{ $i }}.thickness" type="number" label="Thickness (µm)" min="1" max="20" step="0.5" />
                 </div>
                 <div class="col-span-2">
-                    <x-form.input wire:model="{{ $prefix }}.blocks.{{ $i }}.levels" label="Levels" placeholder="e.g. 3 levels, 50µm apart" required />
+                    <x-form.input wire:model="{{ $prefix }}.blocks.{{ $i }}.levels" label="Levels" placeholder="e.g. 3 levels, 50µm apart" />
                     @error($prefix . '.blocks.' . $i . '.levels') <x-form.error>{{ $message }}</x-form.error> @enderror
                 </div>
                 <div class="col-span-2">
-                    <x-form.textarea wire:model="{{ $prefix }}.blocks.{{ $i }}.reason" label="Reason for recut" rows="2" required />
+                    <x-form.textarea wire:model="{{ $prefix }}.blocks.{{ $i }}.reason" label="Reason for recut" rows="2" />
                     @error($prefix . '.blocks.' . $i . '.reason') <x-form.error>{{ $message }}</x-form.error> @enderror
                 </div>
                 <div class="col-span-2">

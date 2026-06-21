@@ -105,7 +105,7 @@
                             <x-form.input wire:model="mrn" label="MRN" placeholder="Optional" />
                         </div>
                         <div>
-                            <x-form.input wire:model="labNumber" label="Lab number" placeholder="Optional" />
+                            <x-form.input wire:model="patientName" label="Patient name" placeholder="Optional" />
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
                 {{-- Priority --}}
                 <div class="rounded-xl border border-gray-200 bg-white p-4">
                     <h3 class="text-sm font-semibold text-ink-muted uppercase tracking-wide mb-3">Priority</h3>
-                    <div class="grid grid-cols-3 gap-2">
+                    <div class="grid grid-cols-2 gap-2">
                         @foreach($priorities as $p)
                             <button
                                 type="button"
@@ -261,10 +261,10 @@
                         <span class="font-medium text-ink">{{ $mrn }}</span>
                     </div>
                 @endif
-                @if($labNumber)
+                @if($patientName)
                     <div class="px-4 py-3 flex justify-between text-sm">
-                        <span class="text-ink-muted">Lab number</span>
-                        <span class="font-medium text-ink">{{ $labNumber }}</span>
+                        <span class="text-ink-muted">Patient name</span>
+                        <span class="font-medium text-ink">{{ $patientName }}</span>
                     </div>
                 @endif
                 <div class="px-4 py-3 flex justify-between text-sm">

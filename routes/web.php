@@ -29,9 +29,11 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', Register::class)->name('register');
 });
 
-// ── Google OAuth ───────────────────────────────────────────────
-Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
-Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
+// ── Google OAuth (guest only — already-authenticated users skip to dashboard) ──
+Route::middleware('guest')->group(function () {
+    Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
+    Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
+});
 
 // ── Logout ─────────────────────────────────────────────────────
 Route::post('/logout', function () {

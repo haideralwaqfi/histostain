@@ -27,7 +27,7 @@ class StainRequest extends Model implements HasMedia
         'status',
         'priority',
         'mrn',
-        'lab_number',
+        'patient_name',
         'case_number',
         'notes',
         'type_data',

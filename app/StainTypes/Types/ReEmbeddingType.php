@@ -30,7 +30,7 @@ class ReEmbeddingType implements StainTypeDefinition
         return [
             'typeData.blocks' => 'required|array|min:1',
             'typeData.blocks.*.block_id' => 'required|string|max:100',
-            'typeData.blocks.*.reason' => 'required|string|max:500',
+            'typeData.blocks.*.reason' => 'nullable|string|max:500',
             'typeData.blocks.*.orientation_instructions' => 'nullable|string|max:500',
         ];
     }

@@ -1,10 +1,10 @@
 {{-- Special Stain --}}
 <div class="space-y-4">
     @foreach($typeData['blocks'] ?? [] as $i => $block)
-        {{-- Alpine owns visual state; @entangle pushes to Livewire on next request (no live round-trip) --}}
         <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-3"
             x-data="{
-                selected: @entangle($prefix . '.blocks.' . $i . '.stains')
+                selected: @entangle($prefix . '.blocks.' . $i . '.stains'),
+                search: ''
             }">
 
             <div class="flex items-center justify-between">
@@ -20,16 +20,22 @@
                     @error($prefix . '.blocks.' . $i . '.block_id') <x-form.error>{{ $message }}</x-form.error> @enderror
                 </div>
 
-                {{-- Pill checkboxes for stains --}}
+                {{-- Stain search + pill checkboxes --}}
                 <div>
                     <p class="block text-sm font-medium text-ink mb-2">
                         Stain(s) <span class="text-red-500">*</span>
                     </p>
+                    <input
+                        type="text"
+                        x-model="search"
+                        placeholder="Search stains…"
+                        class="block w-full rounded-xl border border-gray-300 px-3 py-2 text-sm text-ink mb-2 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    >
                     <div class="flex flex-wrap gap-2">
                         @foreach(\App\StainTypes\Types\SpecialStainType::allOptionsWithMeta() as $val => $meta)
                             @if($meta['is_active'])
-                                {{-- Active: normal selectable pill --}}
                                 <label
+                                    x-show="search === '' || '{{ strtolower($meta['label']) }}'.includes(search.toLowerCase())"
                                     :class="selected.includes('{{ $val }}')
                                         ? 'border-primary bg-primary/10 text-primary'
                                         : 'border-gray-200 bg-white text-ink-muted hover:border-gray-300'"
@@ -43,8 +49,8 @@
                                     {{ $meta['label'] }}
                                 </label>
                             @else
-                                {{-- Inactive: red pill with reason popup on tap --}}
-                                <div class="relative" x-data="{ open: false }">
+                                <div class="relative" x-data="{ open: false }"
+                                    x-show="search === '' || '{{ strtolower($meta['label']) }}'.includes(search.toLowerCase())">
                                     <button
                                         type="button"
                                         @click="open = !open"
@@ -76,14 +82,9 @@
                     <x-form.input wire:model="{{ $prefix }}.blocks.{{ $i }}.stain_other" label="Specify other stain" />
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <x-form.input wire:model="{{ $prefix }}.blocks.{{ $i }}.section_count" type="number" label="Sections" min="1" required />
-                    </div>
-                    <div class="col-span-2">
-                        <x-form.textarea wire:model="{{ $prefix }}.blocks.{{ $i }}.indication" label="Indication" rows="2" />
-                        @error($prefix . '.blocks.' . $i . '.indication') <x-form.error>{{ $message }}</x-form.error> @enderror
-                    </div>
+                <div>
+                    <x-form.textarea wire:model="{{ $prefix }}.blocks.{{ $i }}.indication" label="Indication" rows="2" />
+                    @error($prefix . '.blocks.' . $i . '.indication') <x-form.error>{{ $message }}</x-form.error> @enderror
                 </div>
             </div>
         </div>

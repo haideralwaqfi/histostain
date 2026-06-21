@@ -32,7 +32,7 @@ class FishMolecularType implements StainTypeDefinition
         return [
             'typeData.blocks' => 'required|array|min:1',
             'typeData.blocks.*.block_id' => 'required|string|max:100',
-            'typeData.blocks.*.probe' => 'required|string|max:200',
+            'typeData.blocks.*.probe' => 'nullable|string|max:200',
             'typeData.blocks.*.indication' => 'nullable|string|max:500',
             'typeData.blocks.*.send_out_lab' => 'nullable|string|max:200',
             'typeData.blocks.*.special_instructions' => 'nullable|string|max:500',

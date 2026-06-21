@@ -12,6 +12,7 @@ class CytologySpecialStainType implements StainTypeDefinition
         'diff_quik' => 'Diff-Quik',
         'mucicarmine' => 'Mucicarmine',
         'pas' => 'PAS',
+        'cell_block' => 'Cell Block',
         'other' => 'Other',
     ];
 

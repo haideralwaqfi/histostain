@@ -127,7 +127,6 @@ class SpecialStainType implements StainTypeDefinition
                     'stains'      => [],
                     'stain_other' => '',
                     'indication'  => '',
-                    'section_count' => 1,
                 ],
             ],
         ];
@@ -142,7 +141,6 @@ class SpecialStainType implements StainTypeDefinition
             'typeData.blocks.*.stains.*'   => 'string|in:' . implode(',', array_keys(StainOption::optionsArray('special_stain'))),
             'typeData.blocks.*.stain_other' => 'nullable|string|max:200',
             'typeData.blocks.*.indication' => 'nullable|string|max:500',
-            'typeData.blocks.*.section_count' => 'required|integer|min:1|max:50',
         ];
     }
 }

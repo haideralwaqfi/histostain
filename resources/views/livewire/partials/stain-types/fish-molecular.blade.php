@@ -14,7 +14,7 @@
                     @error($prefix . '.blocks.' . $i . '.block_id') <x-form.error>{{ $message }}</x-form.error> @enderror
                 </div>
                 <div>
-                    <x-form.input wire:model="{{ $prefix }}.blocks.{{ $i }}.probe" label="Probe" required />
+                    <x-form.input wire:model="{{ $prefix }}.blocks.{{ $i }}.probe" label="Probe" />
                     @error($prefix . '.blocks.' . $i . '.probe') <x-form.error>{{ $message }}</x-form.error> @enderror
                 </div>
                 <div class="col-span-2">

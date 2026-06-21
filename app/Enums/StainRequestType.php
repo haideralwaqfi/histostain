@@ -8,6 +8,7 @@ enum StainRequestType: string
     case SpecialStain = 'special_stain';
     case Recut = 'recut';
     case ReEmbedding = 're_embedding';
+    case IfStains = 'if_stains';
     case Decalcification = 'decalcification';
     case CytologySpecialStain = 'cytology_special_stain';
     case FishMolecular = 'fish_molecular';
@@ -19,6 +20,7 @@ enum StainRequestType: string
             self::SpecialStain => 'Special Stain',
             self::Recut => 'Recut',
             self::ReEmbedding => 'Re-embedding',
+            self::IfStains => 'IF Stains',
             self::Decalcification => 'Decalcification',
             self::CytologySpecialStain => 'Cytology Special Stain',
             self::FishMolecular => 'FISH / Molecular',
@@ -32,6 +34,7 @@ enum StainRequestType: string
             self::SpecialStain => 'Special Stain',
             self::Recut => 'Recut',
             self::ReEmbedding => 'Re-embed',
+            self::IfStains => 'IF Stains',
             self::Decalcification => 'Decalc',
             self::CytologySpecialStain => 'Cytology',
             self::FishMolecular => 'FISH',

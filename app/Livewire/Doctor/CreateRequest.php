@@ -23,7 +23,7 @@ class CreateRequest extends Component
     public array $selectedTypes = [];
     public string $priority = 'routine';
     public string $mrn = '';
-    public string $labNumber = '';
+    public string $patientName = '';
     public string $caseNumber = '';
     public string $notes = '';
 
@@ -113,7 +113,7 @@ class CreateRequest extends Component
         $shared = [
             'priority'    => $this->priority,
             'mrn'         => $this->mrn ?: null,
-            'lab_number'  => $this->labNumber ?: null,
+            'patient_name' => $this->patientName ?: null,
             'case_number' => $this->caseNumber,
             'notes'       => $this->notes ?: null,
         ];
@@ -140,9 +140,9 @@ class CreateRequest extends Component
     {
         $this->validate([
             'caseNumber' => 'required|string|max:100',
-            'priority'   => 'required|in:' . implode(',', array_column(StainRequestPriority::cases(), 'value')),
-            'mrn'        => 'nullable|string|max:50',
-            'labNumber'  => 'nullable|string|max:100',
+            'priority'   => 'required|in:routine,urgent',
+            'mrn'         => 'nullable|string|max:50',
+            'patientName' => 'nullable|string|max:200',
             'notes'      => 'nullable|string|max:1000',
         ]);
     }
@@ -166,7 +166,10 @@ class CreateRequest extends Component
     {
         return view('livewire.doctor.create-request', [
             'typeOptions' => StainTypeRegistry::options(),
-            'priorities'  => StainRequestPriority::cases(),
+            'priorities'  => array_filter(
+                StainRequestPriority::cases(),
+                fn($p) => $p->value !== 'stat'
+            ),
         ]);
     }
 }

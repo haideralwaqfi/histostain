@@ -41,10 +41,10 @@
                     <span class="font-medium text-ink">{{ $request->mrn }}</span>
                 </div>
             @endif
-            @if($request->lab_number)
+            @if($request->patient_name)
                 <div class="flex justify-between px-4 py-3 text-sm">
-                    <span class="text-ink-muted">Lab number</span>
-                    <span class="font-medium text-ink">{{ $request->lab_number }}</span>
+                    <span class="text-ink-muted">Patient name</span>
+                    <span class="font-medium text-ink">{{ $request->patient_name }}</span>
                 </div>
             @endif
             @if($request->assignedTech)

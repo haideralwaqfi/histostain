@@ -29,7 +29,7 @@ class StainRequestService
                 'status'      => StainRequestStatus::Pending,
                 'priority'    => $data['priority'],
                 'mrn'         => $data['mrn'] ?? null,
-                'lab_number'  => $data['lab_number'] ?? null,
+                'patient_name' => $data['patient_name'] ?? null,
                 'case_number' => $data['case_number'],
                 'notes'       => $data['notes'] ?? null,
                 'type_data'   => $data['type_data'],

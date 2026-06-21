@@ -19,7 +19,20 @@ class GoogleController extends Controller
 
     public function callback()
     {
-        $googleUser = Socialite::driver('google')->stateless()->user();
+        // Google returns ?error=access_denied (or similar) when the user cancels
+        // or when the redirect URI is misconfigured — handle it before Socialite
+        // tries to exchange a missing code and throws a cryptic 400 exception.
+        if (request()->has('error')) {
+            return redirect()->route('login')
+                ->with('google_error', 'Google sign-in was cancelled or failed. Please try again.');
+        }
+
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+        } catch (\Exception) {
+            return redirect()->route('login')
+                ->with('google_error', 'Could not authenticate with Google. Please try again.');
+        }
 
         // Check for existing account by email first so a user who registered
         // with email/password can link their Google account seamlessly.
@@ -50,6 +63,7 @@ class GoogleController extends Controller
         }
 
         Auth::login($user, remember: true);
+        session()->regenerate();
 
         return redirect($user->dashboardRoute());
     }
