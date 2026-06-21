@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\StainOption;
+use App\StainTypes\Types\IfStainsType;
 use App\StainTypes\Types\IhcType;
 use App\StainTypes\Types\SpecialStainType;
 use Illuminate\Database\Seeder;
@@ -23,6 +24,14 @@ class StainOptionSeeder extends Seeder
         foreach (SpecialStainType::STAIN_OPTIONS as $key => $label) {
             StainOption::firstOrCreate(
                 ['type' => 'special_stain', 'key' => $key],
+                ['label' => $label, 'sort_order' => $i++],
+            );
+        }
+
+        $i = 0;
+        foreach (IfStainsType::PANEL_OPTIONS as $key => $label) {
+            StainOption::firstOrCreate(
+                ['type' => 'if_stains', 'key' => $key],
                 ['label' => $label, 'sort_order' => $i++],
             );
         }

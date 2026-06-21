@@ -194,6 +194,7 @@ class StainConfig extends Component
         $tabs = [
             'ihc'           => 'IHC Antibodies',
             'special_stain' => 'Special Stains',
+            'if_stains'     => 'IF Stains',
         ];
 
         return view('livewire.admin.stain-config', compact('options', 'tabs'));
